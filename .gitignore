@@ -1,0 +1,9 @@
+# Eclipse Project Files 
+.classpath
+.project
+.settings/
+
+/bin/
+/db/addons.xml
+/temp/
+/src/enderneko/addonupdater/util/Test.java

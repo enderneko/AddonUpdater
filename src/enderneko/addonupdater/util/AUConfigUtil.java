@@ -13,6 +13,8 @@ public final class AUConfigUtil {
 	private static File configFile;
 	private static Properties addonUrl = new Properties();
 	private static File addonUrlFile;
+	private static File temp;
+	private static File db;
 
 	static {
 		try {
@@ -23,6 +25,17 @@ public final class AUConfigUtil {
 			addonUrlFile = new File(System.getProperty("user.dir") + "\\config\\addonUrl.ini");
 			AUUtil.checkFile(addonUrlFile);
 			addonUrl.load(new FileInputStream(addonUrlFile));
+			
+			temp = new File(System.getProperty("user.dir") + "\\temp");
+			if (!temp.exists() || !temp.isDirectory()) {
+				temp.mkdir();
+			}
+			
+			db = new File(System.getProperty("user.dir") + "\\db");
+			if (!db.exists() || !db.isDirectory()) {
+				db.mkdir();
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

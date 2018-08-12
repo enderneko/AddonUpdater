@@ -4,6 +4,6 @@
 .settings/
 
 /bin/
-/db/addons.xml
+/db/
 /temp/
 /src/enderneko/addonupdater/util/Test.java

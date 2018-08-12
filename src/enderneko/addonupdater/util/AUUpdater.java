@@ -72,7 +72,6 @@ public final class AUUpdater {
 			// not available
 			a.setStatus(NOT_AVAILABLE);
 		}
-		tbl.updateAndSort();
 		runnables.remove(a.getName());
 	}
 
@@ -122,4 +121,5 @@ public final class AUUpdater {
 			e.printStackTrace();
 		}
 	}
+	
 }

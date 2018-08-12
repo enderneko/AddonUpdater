@@ -50,7 +50,7 @@ public class AddonManagementDialog extends JDialog {
 		setLayout(new BorderLayout());
 
 		// set component
-		scrollPane.setBorder(new TitledBorder("Select addons to manage"));
+		scrollPane.setBorder(new TitledBorder("Select addons to manage (MAIN ADDON FOLDER ONLY)"));
 		scrollPane.getVerticalScrollBar().setUnitIncrement(21);
 		add(scrollPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -113,7 +113,7 @@ public class AddonManagementDialog extends JDialog {
 
 	private void scanAddon() {
 		Vector<Addon> addons = AUScanner.scanAddons();
-		infoLabel.setText("Addon Folders: " + addons.size());
+		infoLabel.setText("Addon Folders: " + addons.size() + ". DO NOT CHANGE THESE WHILE CHECKING/UPDATING.");
 
 		addons.forEach(a -> {
 			AUCheckBox cb = new AUCheckBox(a);

@@ -42,7 +42,9 @@ public final class AUUtil {
 	 * @return
 	 */
 	public static String guessAddonURL(Addon a) {
-		return "https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files";
+		// Set it! even if it's valid.
+		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files");
+		return a.getUrl();
 	}
 
 	/**
@@ -138,6 +140,12 @@ public final class AUUtil {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public static void checkDir(File d) {
+		if (!d.exists() || !d.isDirectory()) {
+			d.mkdir();
 		}
 	}
 

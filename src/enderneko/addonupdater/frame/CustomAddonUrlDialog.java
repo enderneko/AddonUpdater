@@ -73,6 +73,9 @@ public class CustomAddonUrlDialog extends JDialog {
 				setVisible(false);
 			}
 		});
+		
+		// TODO 当该窗口关闭之前如果有过“不在最前”的情况（即切到其他窗口再切回来），关闭时会报错
+		// java.awt.IllegalComponentStateException: component must be showing on the screen to determine its location
 	}
 	
 	private void check(String s) {

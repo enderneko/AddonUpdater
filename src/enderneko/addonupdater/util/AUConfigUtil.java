@@ -18,6 +18,8 @@ public final class AUConfigUtil {
 
 	static {
 		try {
+			AUUtil.checkDir(new File(System.getProperty("user.dir") + "\\config"));
+			
 			configFile = new File(System.getProperty("user.dir") + "\\config\\config.ini");
 			AUUtil.checkFile(configFile);
 			config.load(new FileInputStream(configFile));
@@ -27,14 +29,10 @@ public final class AUConfigUtil {
 			addonUrl.load(new FileInputStream(addonUrlFile));
 			
 			temp = new File(System.getProperty("user.dir") + "\\temp");
-			if (!temp.exists() || !temp.isDirectory()) {
-				temp.mkdir();
-			}
+			AUUtil.checkDir(temp);
 			
 			db = new File(System.getProperty("user.dir") + "\\db");
-			if (!db.exists() || !db.isDirectory()) {
-				db.mkdir();
-			}
+			AUUtil.checkDir(db);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

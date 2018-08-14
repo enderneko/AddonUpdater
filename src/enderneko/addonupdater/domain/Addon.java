@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import enderneko.addonupdater.util.AUUpdater;
-import enderneko.addonupdater.util.AUUtil;
 import enderneko.addonupdater.util.Download;
 import enderneko.addonupdater.widget.AUTable;
 
@@ -123,21 +122,21 @@ public class Addon implements Comparable<Addon>, Observer {
 		switch (state) {
 		case Download.DOWNLOADING:
 			setStatus(AUUpdater.DOWNLOADING + Math.round(((Download) o).getProgress()) + "%");
-			table.updateAndSort();
+			table.refresh();
 			break;
 		case Download.ERROR:
 			setStatus(AUUpdater.DOWNLOAD_FAILED);
-			table.updateAndSort();
+			table.refresh();
 			break;
 		case Download.COMPLETE:
 			setStatus(AUUpdater.UNZIPPING);
-			AUUtil.extractAndMove(Addon.this);
-			table.updateAndSort();
+			AUUpdater.extract(Addon.this);
+			table.refresh();
 		}
 	}
 
 	/**
-	 * 仅用name区分是否是同一个Addon
+	 * 仅用name区分是否是同一个Addon, 仅按name排序
 	 */
 	@Override
 	public int compareTo(Addon a) {

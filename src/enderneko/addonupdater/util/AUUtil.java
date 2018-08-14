@@ -43,7 +43,15 @@ public final class AUUtil {
 	 */
 	public static String guessAddonURL(Addon a) {
 		// Set it! even if it's valid.
+<<<<<<< Updated upstream
 		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files");
+=======
+<<<<<<< HEAD
+		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll("[^a-zA-Z _\\-0-9]", "").replaceAll(" ", "-") + "/files");
+=======
+		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files");
+>>>>>>> 033477accecc66e76a5b872af794e60a2413852f
+>>>>>>> Stashed changes
 		return a.getUrl();
 	}
 
@@ -106,7 +114,8 @@ public final class AUUtil {
 
 			for (String fName : subFolders) {
 				// delete old(s)
-				FileUtils.deleteDirectory(new File(addonsFolder + fName));
+				File old = new File(addonsFolder + fName);
+				if (old.exists()) { FileUtils.deleteDirectory(old); }
 				// move
 				FileUtils.moveDirectory(new File(source, fName), new File(addonsFolder, fName));
 				// delete temp
@@ -121,11 +130,11 @@ public final class AUUtil {
 
 			a.setVersion(a.getLatestVersion());
 			a.setStatus(AUUpdater.UP_TO_DATE);
-			a.getTable().updateAndSave(a);
+			a.getTable().refreshAndSave(a);
 		} catch (Exception e) {
 			e.printStackTrace();
 			a.setStatus(AUUpdater.EXTRACTION_FAILED);
-			a.getTable().updateAndSort();
+			a.getTable().refresh();
 		}
 	}
 

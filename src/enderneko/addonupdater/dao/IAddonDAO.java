@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import enderneko.addonupdater.domain.Addon;
 
-public interface IAddonDAO {
+public interface IAddonDao {
 	/**
 	 * add an addon to db.
 	 * @param a

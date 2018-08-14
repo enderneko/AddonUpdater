@@ -8,8 +8,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import enderneko.addonupdater.dao.IAddonDAO;
-import enderneko.addonupdater.dao.impl.AddonDAOImpl;
+import enderneko.addonupdater.dao.IAddonDao;
+import enderneko.addonupdater.dao.impl.xml.AddonDaoImpl;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.util.AUConfigUtil;
 import enderneko.addonupdater.util.AUUtil;
@@ -28,8 +28,9 @@ public class CustomAddonUrlDialog extends JDialog {
 	private AULabel infoLabel = new AULabel("Addon: ");
 	private JTextField urlField = new JTextField();
 	private AUButton confirmButton = new AUButton("Confirm");
-	private IAddonDAO dao = new AddonDAOImpl();
+	private IAddonDao dao = AUConfigUtil.getAddonDAO();
 	
+	// TODO java.awt.IllegalComponentStateException: component must be showing on the screen to determine its location
 	public CustomAddonUrlDialog(MainFrame owner) {
 		super(owner, "Custom Addon URL", true);
 		setSize(350, 100);

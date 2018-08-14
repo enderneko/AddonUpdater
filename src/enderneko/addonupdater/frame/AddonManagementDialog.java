@@ -14,9 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
-import enderneko.addonupdater.dao.IAddonDAO;
-import enderneko.addonupdater.dao.impl.AddonDAOImpl;
+import enderneko.addonupdater.dao.IAddonDao;
+import enderneko.addonupdater.dao.impl.xml.AddonDaoImpl;
 import enderneko.addonupdater.domain.Addon;
+import enderneko.addonupdater.util.AUConfigUtil;
 import enderneko.addonupdater.util.AUScanner;
 import enderneko.addonupdater.widget.AUButton;
 import enderneko.addonupdater.widget.AUCheckBox;
@@ -39,7 +40,7 @@ public class AddonManagementDialog extends JDialog {
 	private AUButton confirmBtn = new AUButton("Confirm");
 	private AUButton cancelBtn = new AUButton("Cancel");
 	private Set<AUCheckBox> checkBoxes = new TreeSet<>();
-	private IAddonDAO dao = new AddonDAOImpl();
+	private IAddonDao dao = AUConfigUtil.getAddonDAO();
 
 	public AddonManagementDialog(MainFrame owner) {
 		super(owner, "Addon Management", true);

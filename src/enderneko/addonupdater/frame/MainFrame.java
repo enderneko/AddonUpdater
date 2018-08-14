@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -15,8 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import enderneko.addonupdater.dao.IAddonDAO;
-import enderneko.addonupdater.dao.impl.AddonDAOImpl;
+import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.util.AUConfigUtil;
 import enderneko.addonupdater.util.AUUpdater;
@@ -41,7 +41,7 @@ public class MainFrame extends JFrame {
 	private AddonManagementDialog manageDialog;
 	private CustomAddonUrlDialog customDialog;
 	private CurseForgeDialog curseDialog;
-	private IAddonDAO dao = new AddonDAOImpl();
+	private IAddonDao dao = AUConfigUtil.getAddonDAO();
 
 	static {
 		try {
@@ -73,12 +73,7 @@ public class MainFrame extends JFrame {
 		
 		initWidgets();
 		addListeners();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				loadAddon();
-			}
-		}).start();
+		loadAddon();
 	}
 
 	// add all components to frame
@@ -104,7 +99,6 @@ public class MainFrame extends JFrame {
 		customDialog = new CustomAddonUrlDialog(this);
 
 		// TODO
-		updateAllButton.setEnabled(false);
 		customButton.setEnabled(false);
 		curseButton.setEnabled(false);
 	}
@@ -159,6 +153,17 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		updateAllButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				addonTable.getAllAddonsFromTable().forEach(a -> {
+					if (AUUpdater.HAS_UPDATE.equals(a.getStatus())) {
+						AUUpdater.download(a);
+					}
+				});
+			}
+		});
+		
 		curseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -172,6 +177,7 @@ public class MainFrame extends JFrame {
 	 */
 	public void loadAddon() {
 		Vector<Addon> addons = dao.getAll();
+		Collections.sort(addons);
 		addons.forEach(a -> a.setTable(addonTable));
 		addonTable.setData(addons);
 	}

@@ -5,23 +5,18 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import enderneko.addonupdater.dao.IAddonDAO;
-import enderneko.addonupdater.dao.impl.AddonDAOImpl;
+import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.frame.MainFrame;
+import enderneko.addonupdater.util.AUConfigUtil;
 import enderneko.addonupdater.util.AUUpdater;
 
 @SuppressWarnings("serial")
@@ -34,7 +29,7 @@ public class AUTable extends JTable {
 	private AUPopupMenu popupMenu = new AUPopupMenu();
 	private float[] columnWidthPercentage = { 30.0f, 16.0f, 18.0f, 18.0f, 18.0f };
 	private MainFrame owner;
-	private IAddonDAO dao = new AddonDAOImpl();
+	private IAddonDao dao = AUConfigUtil.getAddonDAO();
 
 	public AUTable(MainFrame owner) {
 		this.owner = owner;
@@ -46,19 +41,19 @@ public class AUTable extends JTable {
 		// table header
 		setModel(tableModel);
 
-		// sorter
-		sorter = new TableRowSorter<>(tableModel);
-		setRowSorter(sorter);
-		// setAutoCreateRowSorter(true);
-		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-		sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
-		sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
-		sorter.setSortKeys(sortKeys);
-		sorter.setSortable(0, false);
-		sorter.setSortable(1, true);
-		sorter.setSortable(2, false);
-		sorter.setSortable(3, false);
-		sorter.setSortable(4, false);
+		// sorter FIXME
+//		sorter = new TableRowSorter<>(tableModel);
+//		setRowSorter(sorter);
+//		// setAutoCreateRowSorter(true);
+//		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+//		sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
+//		sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+//		sorter.setSortKeys(sortKeys);
+//		sorter.setSortable(0, false);
+//		sorter.setSortable(1, true);
+//		sorter.setSortable(2, false);
+//		sorter.setSortable(3, false);
+//		sorter.setSortable(4, false);
 
 		// set column not movable
 		getTableHeader().setReorderingAllowed(false);
@@ -114,7 +109,7 @@ public class AUTable extends JTable {
 				} else {
 					if (AUUpdater.HAS_UPDATE.equals(getValueAt(row, col))) { // show update button
 						Addon a = getAddonFromTable((String) getValueAt(row, 0));
-						AUUpdater.downloadAddon(a);
+						AUUpdater.download(a);
 					} else if (AUUpdater.NOT_AVAILABLE.equals(getValueAt(row, col))) { // show retry button
 						Addon a = getAddonFromTable((String) getValueAt(row, 0));
 						AUUpdater.check(AUTable.this, a);
@@ -152,11 +147,11 @@ public class AUTable extends JTable {
 	/**
 	 * through tableModel.fireTableStructureChanged()
 	 */
-	public void updateAndSort() {
+	public void refresh() {
 		tableModel.fireTableDataChanged();
 	}
 
-	public void updateAndSave(Addon a) {
+	public void refreshAndSave(Addon a) {
 		tableModel.fireTableDataChanged();
 		dao.update(a);
 	}

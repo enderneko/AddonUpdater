@@ -16,13 +16,13 @@ public class AUTableModel extends AbstractTableModel {
 	private String[] columns = { "ADDON", "STATUS", "LATEST VERSION", "LATEST DATE", "AUTHOR" };
 
 	public AUTableModel() {
-		addons = new Vector<>();
+		addons = new Vector<Addon>();
 	}
  
-	public AUTableModel(Vector<Addon> addon) {
-		this.addons = addon;
-		fireTableDataChanged();
-	}
+//	public AUTableModel(Vector<Addon> addon) {
+//		this.addons = addon;
+//		fireTableDataChanged();
+//	}
 	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -79,7 +79,7 @@ public class AUTableModel extends AbstractTableModel {
 	}
 	
 	public void setData(Vector<Addon> addons) {
-		this.addons = addons;
+		this.addons = new Vector<>(addons);
 		fireTableDataChanged();
 	}
 }

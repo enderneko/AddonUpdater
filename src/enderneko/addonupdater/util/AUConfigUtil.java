@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
 
 public final class AUConfigUtil {
@@ -15,6 +16,7 @@ public final class AUConfigUtil {
 	private static File addonUrlFile;
 	private static File temp;
 	private static File db;
+	private static IAddonDao dao;
 
 	static {
 		try {
@@ -59,6 +61,22 @@ public final class AUConfigUtil {
 	public static void setAddonUrl(String addonName, String url) {
 		addonUrl.setProperty(addonName, url);
 		writeToFile(addonUrl, addonUrlFile);
+	}
+	
+	public static synchronized IAddonDao getAddonDAO() {
+		if (dao == null) {
+			String daoName = config.getProperty("dao");
+			if (!AUUtil.isEmpty(daoName)) {
+				try {
+					dao = (IAddonDao) Class.forName(daoName).newInstance();
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			} else {
+				dao = new enderneko.addonupdater.dao.impl.sqlite.AddonDaoImpl();
+			}
+		}
+		return dao;
 	}
 
 	// public static List<String> getManagedAddons() {

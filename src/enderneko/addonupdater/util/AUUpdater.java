@@ -13,8 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import enderneko.addonupdater.dao.IAddonDAO;
-import enderneko.addonupdater.dao.impl.AddonDAOImpl;
+import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.widget.AUTable;
 
@@ -37,11 +36,12 @@ public final class AUUpdater {
 	public static final String NOT_AVAILABLE = "Not Available";
 
 	private static AUTable tbl;
-	private static IAddonDAO dao = new AddonDAOImpl();
+	private static IAddonDao dao = AUConfigUtil.getAddonDAO();
 
 	private static Map<String, Runnable> runnables = new HashMap<>();
 	private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
+	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
+	private static ExecutorService downloadThreadPool = Executors.newFixedThreadPool(5);
 
 	private static void update(Addon a, String url) {
 		try {
@@ -56,7 +56,7 @@ public final class AUUpdater {
 					latest.getElementsByAttributeValue("class", "tip standard-date standard-datetime").get(0).text());
 
 			a.setStatus(GETTING_FILE);
-			tbl.updateAndSort();
+			tbl.refresh();
 
 			String href = latest.getElementsByAttributeValue("data-action", "download-file").attr("href");
 			a.setLatestFile(AUUtil.getFinalURL("https://www.curseforge.com" + href + "/file"));
@@ -93,14 +93,14 @@ public final class AUUpdater {
 	public static void updateAddonInfo(Addon a, ExecutorService executor) {
 		if (!runnables.containsKey(a.getName())) {
 			a.setStatus(WAITING);
-			tbl.updateAndSort();
+			tbl.refresh();
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
 					a.setStatus(CHECKING);
-					tbl.updateAndSort();
+					tbl.refresh();
 					update(a, AUUtil.getAddonURL(a));
-					tbl.updateAndSort();
+					tbl.refresh();
 				}
 			};
 			runnables.put(a.getName(), r);
@@ -113,13 +113,21 @@ public final class AUUpdater {
 		updateAddonInfo(a, fixedThreadPool);
 	}
 
-	public static void downloadAddon(Addon a) {
-		try {
-			Download d = new Download(new URL(a.getLatestFile()));
-			d.addObserver(a);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+	public static void download(Addon a) {
+		downloadThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Download d = new Download(new URL(a.getLatestFile()));
+					d.addObserver(a);
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
+	public static void extract(Addon a) {
+		AUUtil.extractAndMove(a);
+	}
 }

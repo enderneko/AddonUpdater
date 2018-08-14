@@ -43,15 +43,7 @@ public final class AUUtil {
 	 */
 	public static String guessAddonURL(Addon a) {
 		// Set it! even if it's valid.
-<<<<<<< Updated upstream
-		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files");
-=======
-<<<<<<< HEAD
 		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll("[^a-zA-Z _\\-0-9]", "").replaceAll(" ", "-") + "/files");
-=======
-		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll(" ", "-") + "/files");
->>>>>>> 033477accecc66e76a5b872af794e60a2413852f
->>>>>>> Stashed changes
 		return a.getUrl();
 	}
 

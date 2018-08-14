@@ -10,8 +10,6 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
@@ -22,7 +20,7 @@ import enderneko.addonupdater.util.AUUpdater;
 @SuppressWarnings("serial")
 public class AUTable extends JTable {
 	private AUTableModel tableModel = new AUTableModel();
-	private TableRowSorter<TableModel> sorter;
+	// private TableRowSorter<TableModel> sorter;
 	private AUTableCellRenderer cellRenderer = new AUTableCellRenderer();
 	private AUTableStatusCellRenderer statusRenderer = new AUTableStatusCellRenderer();
 	private AUTableHeaderRenderer headerRenderer = new AUTableHeaderRenderer();
@@ -42,18 +40,18 @@ public class AUTable extends JTable {
 		setModel(tableModel);
 
 		// sorter FIXME
-//		sorter = new TableRowSorter<>(tableModel);
-//		setRowSorter(sorter);
-//		// setAutoCreateRowSorter(true);
-//		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//		sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
-//		sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
-//		sorter.setSortKeys(sortKeys);
-//		sorter.setSortable(0, false);
-//		sorter.setSortable(1, true);
-//		sorter.setSortable(2, false);
-//		sorter.setSortable(3, false);
-//		sorter.setSortable(4, false);
+		// sorter = new TableRowSorter<>(tableModel);
+		// setRowSorter(sorter);
+		// // setAutoCreateRowSorter(true);
+		// List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+		// sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
+		// sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+		// sorter.setSortKeys(sortKeys);
+		// sorter.setSortable(0, false);
+		// sorter.setSortable(1, true);
+		// sorter.setSortable(2, false);
+		// sorter.setSortable(3, false);
+		// sorter.setSortable(4, false);
 
 		// set column not movable
 		getTableHeader().setReorderingAllowed(false);
@@ -135,7 +133,7 @@ public class AUTable extends JTable {
 		});
 
 	}
-	
+
 	public void addRow(Addon a) {
 		tableModel.addRow(a);
 	}
@@ -155,7 +153,7 @@ public class AUTable extends JTable {
 		tableModel.fireTableDataChanged();
 		dao.update(a);
 	}
-	
+
 	public Addon getAddonFromTable(String name) {
 		return tableModel.getAddon(name);
 	}
@@ -163,7 +161,6 @@ public class AUTable extends JTable {
 	public Vector<Addon> getAllAddonsFromTable() {
 		return tableModel.getAllAddons();
 	}
-
 
 	/*
 	 * // hide a column public void hideColumn(int columnId) { TableColumn col =

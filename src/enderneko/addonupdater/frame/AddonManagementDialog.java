@@ -15,7 +15,6 @@ import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 import enderneko.addonupdater.dao.IAddonDao;
-import enderneko.addonupdater.dao.impl.xml.AddonDaoImpl;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.util.AUConfigUtil;
 import enderneko.addonupdater.util.AUScanner;

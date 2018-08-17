@@ -13,7 +13,7 @@ import enderneko.addonupdater.domain.Addon;
 @SuppressWarnings("serial")
 public class AUTableModel extends AbstractTableModel {
 	private Vector<Addon> addons = null;
-	private String[] columns = { "ADDON", "STATUS", "LATEST VERSION", "LATEST DATE", "AUTHOR" };
+	private String[] columns = { "ADDON", "VERSION", "STATUS", "LATEST VERSION", "LATEST DATE", "AUTHOR" };
 
 	public AUTableModel() {
 		addons = new Vector<Addon>();
@@ -51,12 +51,14 @@ public class AUTableModel extends AbstractTableModel {
 		case 0:
 			return a.getName();
 		case 1:
-			return a.getStatus();
+			return a.getVersion();
 		case 2:
-			return a.getLatestVersion();
+			return a.getStatus();
 		case 3:
-			return a.getLatestDate();
+			return a.getLatestVersion();
 		case 4:
+			return a.getLatestDate();
+		case 5:
 			return a.getAuthor();
 		}
 		return null;

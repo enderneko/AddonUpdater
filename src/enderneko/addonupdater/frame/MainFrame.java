@@ -32,7 +32,7 @@ public class MainFrame extends JFrame {
 	private AUButton dirButton = new AUButton("WoW Dir");
 	private AUButton manageButton = new AUButton("Manage Addons");
 	private AUButton checkButton = new AUButton("Check for Updates");
-	private AUButton updateAllButton = new AUButton("UpdateAll");
+	private AUButton updateAllButton = new AUButton("Update All");
 	private AUButton customButton = new AUButton("Custom");
 	private AUButton curseButton = new AUButton("CurseForge");
 	private AUTable addonTable;
@@ -64,7 +64,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("WoW Addon Updater");
 		getContentPane().setLayout(new MigLayout());
-		setSize(800, 605);
+		setSize(850, 605);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -80,7 +80,7 @@ public class MainFrame extends JFrame {
 	private void initWidgets() {
 		addonTable = new AUTable(this);
 		addonScrollPane = new JScrollPane(addonTable);
-		addonScrollPane.setPreferredSize(new Dimension(800, 600));
+		addonScrollPane.setPreferredSize(new Dimension(getWidth(), 600));
 		// addonScrollPane.setBorder(new CompoundBorder(new TitledBorder("Addon List"),
 		// new EmptyBorder(8, 8, 8, 8)));
 

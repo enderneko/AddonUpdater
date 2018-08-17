@@ -25,7 +25,7 @@ public class AUTable extends JTable {
 	private AUTableStatusCellRenderer statusRenderer = new AUTableStatusCellRenderer();
 	private AUTableHeaderRenderer headerRenderer = new AUTableHeaderRenderer();
 	private AUPopupMenu popupMenu = new AUPopupMenu();
-	private float[] columnWidthPercentage = { 30.0f, 16.0f, 18.0f, 18.0f, 18.0f };
+	private final float[] columnWidthPercentage = { 25.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f };
 	private MainFrame owner;
 	private IAddonDao dao = AUConfigUtil.getAddonDAO();
 
@@ -58,7 +58,7 @@ public class AUTable extends JTable {
 
 		// set renderer/editor
 		setDefaultRenderer(Object.class, cellRenderer);
-		getColumnModel().getColumn(1).setCellRenderer(statusRenderer);
+		getColumnModel().getColumn(2).setCellRenderer(statusRenderer);
 		// getColumnModel().getColumn(1).setCellEditor(statusEditor);
 		getTableHeader().setDefaultRenderer(headerRenderer);
 
@@ -88,9 +88,9 @@ public class AUTable extends JTable {
 			}
 		});
 
-		// remove highlight onLeave table
 		addMouseListener(new MouseAdapter() {
 			@Override
+			// remove highlight onLeave table
 			public void mouseExited(MouseEvent e) {
 				cellRenderer.rowAtPoint = -1;
 				statusRenderer.rowAtPoint = -1;
@@ -101,16 +101,20 @@ public class AUTable extends JTable {
 			public void mouseClicked(MouseEvent e) {
 				int row = rowAtPoint(e.getPoint());
 				int col = columnAtPoint(e.getPoint());
-				if (e.getButton() == 3) {
+				if (e.getButton() == 3) { // right-click show popupmenu
 					Addon a = getAddonFromTable((String) getValueAt(row, 0));
 					popupMenu.showPopupMenu(owner, AUTable.this, e.getPoint(), a);
-				} else {
-					if (AUUpdater.HAS_UPDATE.equals(getValueAt(row, col))) { // show update button
+				} else if (col == 2) { // download/retry "button"
+					Object value = getValueAt(row, col);
+					if (AUUpdater.HAS_UPDATE.equals(value)) { // show update button
 						Addon a = getAddonFromTable((String) getValueAt(row, 0));
 						AUUpdater.download(a);
-					} else if (AUUpdater.NOT_AVAILABLE.equals(getValueAt(row, col))) { // show retry button
+					} else if (AUUpdater.NOT_AVAILABLE.equals(value)) { // show retry button
 						Addon a = getAddonFromTable((String) getValueAt(row, 0));
 						AUUpdater.check(AUTable.this, a);
+					} else if (AUUpdater.EXTRACTION_FAILED.equals(value) || AUUpdater.DOWNLOAD_FAILED.equals(value)) { // show redownload button
+						Addon a = getAddonFromTable((String) getValueAt(row, 0));
+						AUUpdater.download(a);
 					}
 				}
 			}
@@ -134,9 +138,20 @@ public class AUTable extends JTable {
 
 	}
 
-	public void addRow(Addon a) {
-		tableModel.addRow(a);
+	@Override
+	public String getToolTipText(MouseEvent e) {
+		int row = rowAtPoint(e.getPoint());
+		int col = columnAtPoint(e.getPoint());
+		Object value = getValueAt(row, col);
+		if (col != 2 && value != null && !"".equals(value)) {
+			return value.toString();
+		}
+		return null;
 	}
+
+	// public void addRow(Addon a) {
+	// tableModel.addRow(a);
+	// }
 
 	public void setData(Vector<Addon> addons) {
 		tableModel.setData(addons);

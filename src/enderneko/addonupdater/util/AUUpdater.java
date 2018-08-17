@@ -51,7 +51,7 @@ public final class AUUpdater {
 			// first is the latest
 			Element latest = list.get(0);
 			a.setUrl(url);
-			a.setLatestVersion(latest.getElementsByAttributeValue("class", "table__content file__name").get(0).text());
+			a.setLatestVersion(latest.getElementsByAttributeValue("class", "table__content file__name full").get(0).text());
 			a.setLatestDate(
 					latest.getElementsByAttributeValue("class", "tip standard-date standard-datetime").get(0).text());
 

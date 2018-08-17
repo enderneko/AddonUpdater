@@ -34,8 +34,8 @@ public final class AUScanner {
 					try {
 						sc = new Scanner(toc);
 						Pattern titlePattern = Pattern.compile("## Title:\\s*(.+)");
-						// version 不一定与 latestVersion 格式一致，不便于比较
-						// Pattern versionPattern = Pattern.compile("## Version:\\s*(.+)");
+						// version 不一定与 latestVersion 格式一致
+						Pattern versionPattern = Pattern.compile("## Version:\\s*(.+)");
 						Pattern authorPattern = Pattern.compile("## Author:\\s*(.+)");
 
 						while (sc.hasNextLine()) {
@@ -49,12 +49,12 @@ public final class AUScanner {
 								}
 							}
 
-							// if (a.getVersion() == null) {
-							// m = versionPattern.matcher(line);
-							// if (m.find()) {
-							// a.setVersion(m.group(1));
-							// }
-							// }
+							if (a.getVersion() == null) {
+								m = versionPattern.matcher(line);
+								if (m.find()) {
+									a.setVersion(m.group(1));
+								}
+							}
 
 							if (a.getAuthor() == null) {
 								m = authorPattern.matcher(line);

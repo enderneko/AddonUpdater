@@ -107,19 +107,20 @@ public final class AUUtil {
 			for (String fName : subFolders) {
 				// delete old(s)
 				File old = new File(addonsFolder + fName);
-				if (old.exists()) { FileUtils.deleteDirectory(old); }
+				if (old.exists()) FileUtils.forceDelete(old);
 				// move
 				FileUtils.moveDirectory(new File(source, fName), new File(addonsFolder, fName));
-				// delete temp
-				new Timer().schedule(new TimerTask() {
-					@Override
-					public void run() {
-						zip.delete();
-						source.delete();
-					}
-				}, 1000);
 			}
-
+			
+			// delete temp
+			new Timer().schedule(new TimerTask() {
+				@Override
+				public void run() {
+					zip.delete();
+					source.delete();
+				}
+			}, 1000);
+			
 			a.setVersion(a.getLatestVersion());
 			a.setStatus(AUUpdater.UP_TO_DATE);
 			a.getTable().refreshAndSave(a);

@@ -1,6 +1,5 @@
 package enderneko.addonupdater.util;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,6 +33,8 @@ public final class AUUpdater {
 	public static final String UP_TO_DATE = "Up to Date";
 	public static final String HAS_UPDATE = "Has Update";
 	public static final String NOT_AVAILABLE = "Not Available";
+	
+	public static final String TUKUI = "https://www.tukui.org";
 
 	private static AUTable tbl;
 	private static IAddonDao dao = AUConfigUtil.getAddonDAO();
@@ -69,27 +70,44 @@ public final class AUUpdater {
 			}
 			dao.update(a);
 
-		} catch (IOException | IndexOutOfBoundsException e) {
+		} catch (Exception e) {
 			// not available
 			a.setStatus(NOT_AVAILABLE);
 		}
 		updateRunnables.remove(a.getName());
 	}
+	
+	private static void updateTUKUI(Addon a) {
+		try {
+			String url = TUKUI + "/download.php?ui=" + a.getName().toLowerCase();
+			Document doc = Jsoup.connect(url).timeout(15000).get();
+			
+			Element linkEl = doc.getElementsByAttributeValue("class", "btn btn-mod btn-border-w btn-round btn-large").get(0);
+			String latestVersion = doc.getElementsByAttributeValue("class", "Premium").get(0).text();
+			String latestDate = doc.getElementsByAttributeValue("class", "Premium").get(1).text();
+			
+			a.setUrl(url);
+			a.setLatestVersion(latestVersion);
+			a.setLatestDate(latestDate);
 
-	// public static void updateAddonInfo(Addon a) {
-	// // prevent create "same" thread again and again
-	// if (!threads.containsKey(a.getName()) || threads.get(a.getName()).getState()
-	// != Thread.State.RUNNABLE) {
-	// Thread t = new Thread(() -> {
-	// a.setStatus(CHECKING);
-	// tbl.updateAndSort();
-	// update(a, AUUtil.getAddonURL(a));
-	// tbl.updateAndSort();
-	// });
-	// threads.put(a.getName(), t);
-	// t.start();
-	// }
-	// }
+			a.setStatus(GETTING_FILE);
+			tbl.refresh();
+			
+			a.setLatestFile(TUKUI + linkEl.attr("href"));
+			
+			if (a.getLatestVersion().equals(a.getVersion())) {
+				a.setStatus(UP_TO_DATE);
+			} else {
+				a.setStatus(HAS_UPDATE);
+			}
+			dao.update(a);
+
+		} catch (Exception e) {
+			// not available
+			a.setStatus(NOT_AVAILABLE);
+		}
+		updateRunnables.remove(a.getName());
+	}
 
 	public static void updateAddonInfo(Addon a, ExecutorService executor) {
 		if (!updateRunnables.containsKey(a.getName())) {
@@ -100,8 +118,11 @@ public final class AUUpdater {
 				public void run() {
 					a.setStatus(CHECKING);
 					tbl.refresh();
-					update(a, AUUtil.getAddonURL(a));
-					tbl.refresh();
+					if ("Tukui".equals(a.getName()) || "ElvUI".equals(a.getName())) {
+						updateTUKUI(a);
+					} else {
+						update(a, AUUtil.getAddonURL(a));
+					}
 				}
 			};
 			updateRunnables.put(a.getName(), r);
@@ -120,6 +141,8 @@ public final class AUUpdater {
 				@Override
 				public void run() {
 					try {
+						a.setStatus(DOWNLOADING);
+						a.getTable().refresh();
 						Download d = new Download(new URL(a.getLatestFile()));
 						d.addObserver(a);
 					} catch (MalformedURLException e) {

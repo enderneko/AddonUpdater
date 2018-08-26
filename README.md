@@ -24,4 +24,7 @@ Addon's name may be different from its url on CurseForge, so if you can not upda
 Addon Url end with **/files**.
 
 _E.g. Addon Control Panel -> https://www.curseforge.com/wow/addons/acp/files_
+
+_E.g. DBM -> https://www.curseforge.com/wow/addons/deadly-boss-mods/files_
+
 ![Set the correct url](https://github.com/enderneko/AddonUpdater/blob/master/screenshots/EditUrl.png)

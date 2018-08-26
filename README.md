@@ -1,6 +1,6 @@
 # AddonUpdater
 
-CurseForge Addon updater for World of Warcraft.
+CurseForge Addon updater for World of Warcraft. **REQUIRES JAVA 8.0+.**
 
 ## Choose addons to manage
 

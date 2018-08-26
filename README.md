@@ -9,6 +9,7 @@ Select addon's main folder only.
 _For example: if you want AddonUpdater to manage **DBM**, just select **Deadly Boss Mods Core**._
 
 _Another example: to manage **ElvUI**, just select **ElvUI**._
+
 ![Addon Management Dialog](https://github.com/enderneko/AddonUpdater/blob/master/screenshots/Management.png)
 
 ## Check for updates
@@ -28,4 +29,5 @@ Addon Url end with **/files**.
 _E.g. Addon Control Panel -> https://www.curseforge.com/wow/addons/acp/files_
 
 _E.g. DBM -> https://www.curseforge.com/wow/addons/deadly-boss-mods/files_
+
 ![Set the correct url](https://github.com/enderneko/AddonUpdater/blob/master/screenshots/EditUrl.png)

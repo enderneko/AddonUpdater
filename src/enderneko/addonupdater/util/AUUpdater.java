@@ -38,7 +38,8 @@ public final class AUUpdater {
 	private static AUTable tbl;
 	private static IAddonDao dao = AUConfigUtil.getAddonDAO();
 
-	private static Map<String, Runnable> runnables = new HashMap<>();
+	private static Map<String, Runnable> updateRunnables = new HashMap<>();
+	private static Map<String, Runnable> downloadRunnables = new HashMap<>();
 	private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 	private static ExecutorService downloadThreadPool = Executors.newFixedThreadPool(5);
@@ -72,7 +73,7 @@ public final class AUUpdater {
 			// not available
 			a.setStatus(NOT_AVAILABLE);
 		}
-		runnables.remove(a.getName());
+		updateRunnables.remove(a.getName());
 	}
 
 	// public static void updateAddonInfo(Addon a) {
@@ -91,7 +92,7 @@ public final class AUUpdater {
 	// }
 
 	public static void updateAddonInfo(Addon a, ExecutorService executor) {
-		if (!runnables.containsKey(a.getName())) {
+		if (!updateRunnables.containsKey(a.getName())) {
 			a.setStatus(WAITING);
 			tbl.refresh();
 			Runnable r = new Runnable() {
@@ -103,7 +104,7 @@ public final class AUUpdater {
 					tbl.refresh();
 				}
 			};
-			runnables.put(a.getName(), r);
+			updateRunnables.put(a.getName(), r);
 			executor.execute(r);
 		}
 	}
@@ -114,20 +115,25 @@ public final class AUUpdater {
 	}
 
 	public static void download(Addon a) {
-		downloadThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Download d = new Download(new URL(a.getLatestFile()));
-					d.addObserver(a);
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
+		if (!downloadRunnables.containsKey(a.getName())) {
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Download d = new Download(new URL(a.getLatestFile()));
+						d.addObserver(a);
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			};
+			downloadRunnables.put(a.getName(), r);
+			downloadThreadPool.execute(r);
+		}
 	}
 	
 	public static void extract(Addon a) {
 		AUUtil.extractAndMove(a);
+		downloadRunnables.remove(a.getName()); // download finished
 	}
 }

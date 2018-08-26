@@ -74,6 +74,7 @@ public class MainFrame extends JFrame {
 		initWidgets();
 		addListeners();
 		loadAddon();
+		checkDirValidity();
 	}
 
 	// add all components to frame
@@ -128,13 +129,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if ("text".equals(evt.getPropertyName())) {
-					if (AUUtil.checkDirValidity()) {
-						manageButton.setEnabled(true);
-						checkButton.setEnabled(true);
-					} else {
-						manageButton.setEnabled(false);
-						checkButton.setEnabled(false);
-					}
+					checkDirValidity();
 				}
 			}
 		});
@@ -170,6 +165,18 @@ public class MainFrame extends JFrame {
 				curseDialog.setVisible(true);
 			}
 		});
+	}
+
+	private void checkDirValidity() {
+		if (AUUtil.checkDirValidity()) {
+			manageButton.setEnabled(true);
+			checkButton.setEnabled(true);
+			updateAllButton.setEnabled(true);
+		} else {
+			manageButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			updateAllButton.setEnabled(false);
+		}
 	}
 
 	/**

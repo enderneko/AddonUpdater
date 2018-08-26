@@ -80,9 +80,11 @@ public class AUPopupMenu extends JPopupMenu {
 	}
 	
 	public void showPopupMenu(MainFrame m, AUTable t, Point p, Addon a) {
-		main = m;
-		table = t;
-		addon = a;
-		show(t, (int) p.getX(), (int) p.getY());
+		if (AUUtil.checkDirValidity()) {
+			main = m;
+			table = t;
+			addon = a;
+			show(t, (int) p.getX(), (int) p.getY());
+		}
 	}
 }

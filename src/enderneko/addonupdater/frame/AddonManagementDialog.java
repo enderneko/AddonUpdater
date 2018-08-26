@@ -30,7 +30,7 @@ import net.miginfocom.swing.MigLayout;
 @SuppressWarnings("serial")
 public class AddonManagementDialog extends JDialog {
 	private MainFrame owner;
-	private JPanel scollChild = new JPanel(new MigLayout("wrap 3", "[]30[]", "[]10[]"));
+	private JPanel scollChild = new JPanel(new MigLayout("wrap 3", "[260]", "[]8[]"));
 	private JScrollPane scrollPane = new JScrollPane(scollChild);
 	private JPanel bottomPanel = new JPanel(new MigLayout("", "[grow][]"));
 	private AULabel infoLabel = new AULabel("Addon Folders: ");
@@ -44,14 +44,14 @@ public class AddonManagementDialog extends JDialog {
 	public AddonManagementDialog(MainFrame owner) {
 		super(owner, "Addon Management", true);
 		this.owner = owner;
-		setSize(850, 480);
+		setSize(850, 493);
 		setResizable(false);
 		setLocationRelativeTo(owner);
 		setLayout(new BorderLayout());
 
 		// set component
 		scrollPane.setBorder(new TitledBorder("Select addons to manage (MAIN ADDON FOLDER ONLY)"));
-		scrollPane.getVerticalScrollBar().setUnitIncrement(21);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(22);
 		add(scrollPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
 		bottomPanel.add(infoLabel);

@@ -109,7 +109,8 @@ public class MainFrame extends JFrame {
 		dirButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				fileChooser.showFileChooser(AUConfigUtil.getProperty("dir"), MainFrame.this);
+				String path = AUUtil.isEmpty(AUConfigUtil.getProperty("dir")) ? "" : AUConfigUtil.getProperty("dir");
+				fileChooser.showFileChooser(path, MainFrame.this);
 			}
 		});
 

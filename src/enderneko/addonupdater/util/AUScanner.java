@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import enderneko.addonupdater.domain.Addon;
 
@@ -33,22 +34,22 @@ public final class AUScanner {
 
 				if (toc.exists()) { // is an illegal addon
 					Addon a = new Addon();
-					try {
-						Files.lines(toc.toPath()).forEach(line -> {
+					try (Stream<String> s = Files.lines(toc.toPath())) {
+						s.forEach(line -> {
 							if (a.getName() == null) {
 								Matcher m = titlePattern.matcher(line);
 								if (m.find()) {
 									a.setName(m.group(1).replaceAll("\\|c\\S{8}|\\|r", ""));
 								}
 							}
-
+							
 							if (a.getVersion() == null) {
 								Matcher m = versionPattern.matcher(line);
 								if (m.find()) {
 									a.setVersion(m.group(1));
 								}
 							}
-
+							
 							if (a.getAuthor() == null) {
 								Matcher m = authorPattern.matcher(line);
 								if (m.find()) {
@@ -60,12 +61,12 @@ public final class AUScanner {
 						if (!AUUtil.isEmpty(a.getName())) {
 							addons.add(a);
 						}
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-			}
 
+			}
 		}
 		return addons;
 	}

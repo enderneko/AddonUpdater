@@ -50,16 +50,34 @@ public final class AUUpdater {
 			Document doc = Jsoup.connect(url).timeout(15000).get();
 			Elements list = doc.getElementsByAttributeValue("class", "project-file-list__item");
 			if (list.size() == 0) throw new IndexOutOfBoundsException();
-			// first is the latest
-			Element latest = list.get(0);
+			
+			Element latest = null;
+			
+			if ("true".equals(AUConfigUtil.getProperty("allowAlphaOrBeta"))) {
+				// first is the latest
+				latest = list.get(0);
+			
+			} else {
+				boolean found = false;
+				for (Element ele : list) {
+					String releaseType = ele.getElementsByAttributeValue("class", "project-file__release-type").get(0).child(0).attr("title");
+					if ("Release".equals(releaseType)) {
+						latest = ele;
+						found = true;
+						break;
+					}
+				}
+				if (!found) latest = list.get(0); // not found in this page
+			}
+			
 			a.setUrl(url);
 			a.setLatestVersion(latest.getElementsByAttributeValue("class", "table__content file__name full").get(0).text());
 			a.setLatestDate(
 					latest.getElementsByAttributeValue("class", "tip standard-date standard-datetime").get(0).text());
-
+			
 			a.setStatus(GETTING_FILE);
 			tbl.refresh();
-
+			
 			String href = latest.getElementsByAttributeValue("data-action", "download-file").attr("href");
 			a.setLatestFile(AUUtil.getFinalURL("https://www.curseforge.com" + href + "/file"));
 

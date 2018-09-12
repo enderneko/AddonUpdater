@@ -3,6 +3,8 @@ package enderneko.addonupdater.util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,5 +71,19 @@ public final class AUScanner {
 			}
 		}
 		return addons;
+	}
+	
+	public static List<Addon> checkAddons(Vector<Addon> addonsInDB) {
+		List<Addon> delList = new ArrayList<>();
+		
+		Vector<Addon> addonsInFolder = scanAddons();
+		for (Addon a : addonsInDB) {
+			if (!addonsInFolder.contains(a)) { // addon deleted
+				delList.add(a);
+			}
+		}
+		
+		addonsInDB.removeAll(delList);
+		return delList;
 	}
 }

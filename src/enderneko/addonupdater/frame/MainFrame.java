@@ -3,14 +3,17 @@ package enderneko.addonupdater.frame;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -19,9 +22,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import enderneko.addonupdater.dao.IAddonDao;
 import enderneko.addonupdater.domain.Addon;
 import enderneko.addonupdater.util.AUConfigUtil;
+import enderneko.addonupdater.util.AUScanner;
 import enderneko.addonupdater.util.AUUpdater;
 import enderneko.addonupdater.util.AUUtil;
 import enderneko.addonupdater.widget.AUButton;
+import enderneko.addonupdater.widget.AUCheckBox;
 import enderneko.addonupdater.widget.AULabel;
 import enderneko.addonupdater.widget.AUTable;
 import net.miginfocom.swing.MigLayout;
@@ -35,6 +40,7 @@ public class MainFrame extends JFrame {
 	private AUButton updateAllButton = new AUButton("Update All");
 	private AUButton customButton = new AUButton("Custom");
 	private AUButton curseButton = new AUButton("CurseForge");
+	private JCheckBox allowAlphaOrBetaCB = new JCheckBox("Allow Alpha/Beta");
 	private AUTable addonTable;
 	private JScrollPane addonScrollPane;
 	private AUFileChooser fileChooser = new AUFileChooser();
@@ -87,14 +93,17 @@ public class MainFrame extends JFrame {
 
 		add(dirButton, "split 2");
 		add(dirLable, "wrap");
-		add(manageButton, "split 5");
+		add(manageButton, "split 6");
 		add(checkButton);
 		add(updateAllButton);
 		add(customButton);
-		add(curseButton, "wrap");
+		add(curseButton);
+		add(allowAlphaOrBetaCB, "wrap");
 		add(addonScrollPane);
 
 		dirLable.setText(AUConfigUtil.getProperty("dir"));
+		allowAlphaOrBetaCB.setFocusable(false);
+		allowAlphaOrBetaCB.setSelected("true".equals(AUConfigUtil.getProperty("allowAlphaOrBeta")));
 		manageDialog = new AddonManagementDialog(this);
 		curseDialog = new CurseForgeDialog(this);
 		customDialog = new CustomAddonUrlDialog(this);
@@ -166,6 +175,14 @@ public class MainFrame extends JFrame {
 				curseDialog.setVisible(true);
 			}
 		});
+		
+		allowAlphaOrBetaCB.addItemListener(l -> {
+			if (ItemEvent.SELECTED == l.getStateChange()) {
+				AUConfigUtil.setProperty("allowAlphaOrBeta", "true");
+			} else {
+				AUConfigUtil.setProperty("allowAlphaOrBeta", "false");
+			}
+		});
 	}
 
 	private void checkDirValidity() {
@@ -185,6 +202,11 @@ public class MainFrame extends JFrame {
 	 */
 	public void loadAddon() {
 		Vector<Addon> addons = dao.getAll();
+		List<Addon> delList = AUScanner.checkAddons(addons);
+		for (Addon a : delList) {
+			dao.delete(a.getName());
+		}
+		
 		Collections.sort(addons);
 		addons.forEach(a -> a.setTable(addonTable));
 		addonTable.setData(addons);

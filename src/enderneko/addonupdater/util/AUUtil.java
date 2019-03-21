@@ -41,9 +41,10 @@ public final class AUUtil {
 	 * @param a
 	 * @return
 	 */
-	public static String guessAddonURL(Addon a) {
+	private static String guessAddonURL(Addon a) {
 		// Set it! even if it's valid.
-		a.setUrl("https://www.curseforge.com/wow/addons/" + a.getName().toLowerCase().replaceAll("[^a-zA-Z _\\-0-9]", "").replaceAll(" ", "-") + "/files");
+		a.setUrl("https://www.curseforge.com/wow/addons/"
+				+ a.getName().toLowerCase().replaceAll("[^a-zA-Z _\\-0-9]", "").replaceAll(" ", "-") + "/files");
 		return a.getUrl();
 	}
 
@@ -75,16 +76,21 @@ public final class AUUtil {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setConnectTimeout(15000);
 		conn.setInstanceFollowRedirects(false);
+		conn.setRequestMethod("GET");
+		// masquerade as a web browser
+		conn.setRequestProperty("User-Agent",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
 		conn.connect();
-		conn.getInputStream();
+		// conn.getInputStream();
 		int responseCode = conn.getResponseCode();
+//		System.out.println("responseCode: " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
 				|| responseCode == 307) {
 			String redirectUrl = conn.getHeaderField("Location");
-			// System.out.println("responseCode: " + responseCode + ", redirect: " +
-			// redirectUrl);
+//			System.out.println("redirect: " + redirectUrl);
 			return getFinalURL(redirectUrl);
 		}
+//		System.out.println("Final URL: " + url);
 		return url;
 	}
 
@@ -107,11 +113,12 @@ public final class AUUtil {
 			for (String fName : subFolders) {
 				// delete old(s)
 				File old = new File(addonsFolder + fName);
-				if (old.exists()) FileUtils.forceDelete(old);
+				if (old.exists())
+					FileUtils.forceDelete(old);
 				// move
 				FileUtils.moveDirectory(new File(source, fName), new File(addonsFolder, fName));
 			}
-			
+
 			// delete temp
 			new Timer().schedule(new TimerTask() {
 				@Override
@@ -120,7 +127,7 @@ public final class AUUtil {
 					source.delete();
 				}
 			}, 1000);
-			
+
 			a.setVersion(a.getLatestVersion());
 			a.setStatus(AUUpdater.UP_TO_DATE);
 			a.getTable().refreshAndSave(a);
@@ -133,6 +140,7 @@ public final class AUUtil {
 
 	/**
 	 * if file not exists then create it.
+	 * 
 	 * @param addonUrlFile
 	 */
 	public static void checkFile(File f) {
@@ -144,7 +152,7 @@ public final class AUUtil {
 			}
 		}
 	}
-	
+
 	public static void checkDir(File d) {
 		if (!d.exists() || !d.isDirectory()) {
 			d.mkdir();
@@ -154,15 +162,15 @@ public final class AUUtil {
 	public static Image getImage(String fileName) {
 		return ((ImageIcon) getIcon(fileName)).getImage();
 	}
-	
+
 	public static Icon getIcon(String fileName) {
 		return new ImageIcon(System.getProperty("user.dir") + "\\config\\" + fileName);
 	}
-	
+
 	public static boolean isEmpty(String s) {
 		return (s == null || s.trim().equals(""));
 	}
-	
+
 	public static boolean isAddonUrl(String s) {
 		return s.startsWith("https://www.curseforge.com/wow/addons/") && s.endsWith("/files") && s.length() > 38 + 6;
 	}

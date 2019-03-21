@@ -49,6 +49,7 @@ public class AddonDaoImpl implements IAddonDao {
 		Connection conn = SQLiteUtil.getConnection();
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				return resultSetToAddon(rs);

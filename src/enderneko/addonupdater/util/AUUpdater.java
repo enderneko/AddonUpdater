@@ -41,11 +41,11 @@ public final class AUUpdater {
 
 	private static Map<String, Runnable> updateRunnables = new HashMap<>();
 	private static Map<String, Runnable> downloadRunnables = new HashMap<>();
-	private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+	// private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 	private static ExecutorService downloadThreadPool = Executors.newFixedThreadPool(5);
 
-	private static void update(Addon a, String url) {
+	private static void fetch(Addon a, String url) {
 		try {
 			Document doc = Jsoup.connect(url).timeout(15000).get();
 			Elements list = doc.getElementsByAttributeValue("class", "project-file-list__item");
@@ -89,13 +89,14 @@ public final class AUUpdater {
 			dao.update(a);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			// not available
 			a.setStatus(NOT_AVAILABLE);
 		}
 		updateRunnables.remove(a.getName());
 	}
 	
-	private static void updateTUKUI(Addon a) {
+	private static void fetchTUKUI(Addon a) {
 		try {
 			String url = TUKUI + "/download.php?ui=" + a.getName().toLowerCase();
 			Document doc = Jsoup.connect(url).timeout(15000).get();
@@ -127,7 +128,7 @@ public final class AUUpdater {
 		updateRunnables.remove(a.getName());
 	}
 
-	public static void updateAddonInfo(Addon a, ExecutorService executor) {
+	private static void fetchAddonInfo(Addon a, ExecutorService executor) {
 		if (!updateRunnables.containsKey(a.getName())) {
 			a.setStatus(WAITING);
 			tbl.refresh();
@@ -137,9 +138,9 @@ public final class AUUpdater {
 					a.setStatus(CHECKING);
 					tbl.refresh();
 					if ("Tukui".equals(a.getName()) || "ElvUI".equals(a.getName())) {
-						updateTUKUI(a);
+						fetchTUKUI(a);
 					} else {
-						update(a, AUUtil.getAddonURL(a));
+						fetch(a, AUUtil.getAddonURL(a));
 					}
 				}
 			};
@@ -150,7 +151,7 @@ public final class AUUpdater {
 
 	public static void check(AUTable tbl, Addon a) {
 		AUUpdater.tbl = tbl;
-		updateAddonInfo(a, fixedThreadPool);
+		fetchAddonInfo(a, fixedThreadPool);
 	}
 
 	public static void download(Addon a) {

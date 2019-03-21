@@ -1,7 +1,6 @@
 package enderneko.addonupdater.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public final class AUScanner {
 				// locate .toc file
 				File toc = new File(f.getPath() + "\\" + f.getName() + ".toc");
 
-				if (toc.exists()) { // is an illegal addon
+				if (toc.exists()) { // is an illegal addon : name == folder name
 					Addon a = new Addon();
 					try (Stream<String> s = Files.lines(toc.toPath())) {
 						s.forEach(line -> {
@@ -73,14 +72,22 @@ public final class AUScanner {
 		return addons;
 	}
 	
-	public static List<Addon> checkAddons(Vector<Addon> addonsInDB) {
+	/**
+	 * check deleted addons 
+	 * @param addonsInDB
+	 * @return
+	 */
+	public static List<Addon> checkDeletedAddons(Vector<Addon> addonsInDB) {
 		List<Addon> delList = new ArrayList<>();
 		
 		Vector<Addon> addonsInFolder = scanAddons();
 		for (Addon a : addonsInDB) {
 			if (!addonsInFolder.contains(a)) { // addon deleted
 				delList.add(a);
-			}
+			} /** else {
+				a.setVersion(((Addon) addonsInFolder.get(addonsInFolder.indexOf(a))).getVersion());
+				System.out.println(a.getVersion());
+			} */
 		}
 		
 		addonsInDB.removeAll(delList);

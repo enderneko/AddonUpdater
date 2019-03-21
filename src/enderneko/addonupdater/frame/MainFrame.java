@@ -26,7 +26,6 @@ import enderneko.addonupdater.util.AUScanner;
 import enderneko.addonupdater.util.AUUpdater;
 import enderneko.addonupdater.util.AUUtil;
 import enderneko.addonupdater.widget.AUButton;
-import enderneko.addonupdater.widget.AUCheckBox;
 import enderneko.addonupdater.widget.AULabel;
 import enderneko.addonupdater.widget.AUTable;
 import net.miginfocom.swing.MigLayout;
@@ -202,7 +201,8 @@ public class MainFrame extends JFrame {
 	 */
 	public void loadAddon() {
 		Vector<Addon> addons = dao.getAll();
-		List<Addon> delList = AUScanner.checkAddons(addons);
+		// check deleted addons, and delete them from db.
+		List<Addon> delList = AUScanner.checkDeletedAddons(addons);
 		for (Addon a : delList) {
 			dao.delete(a.getName());
 		}
